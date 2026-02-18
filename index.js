@@ -21,9 +21,9 @@ const filas = {};
 
 function jogadoresNecessarios(channelName) {
     if (channelName.includes("1v1")) return 2;
-    if (channelName.includes("2v2")) return 4;
-    if (channelName.includes("3v3")) return 6;
-    if (channelName.includes("4v4")) return 8;
+    if (channelName.includes("2v2")) return 2;
+    if (channelName.includes("3v3")) return 2;
+    if (channelName.includes("4v4")) return 2;
     return 2;
 }
 
@@ -140,3 +140,4 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(process.env.TOKEN);
+
