@@ -27,6 +27,19 @@ function jogadoresNecessarios(channelName) {
     return 2;
 }
 
+const valores = [
+    "R$1",
+    "R$2",
+    "R$5",
+    "R$10",
+    "R$20",
+    "R$30",
+    "R$50",
+    "R$75",
+    "R$100",
+    "R$200"
+];
+
 client.on("clientReady", async () => {
     console.log(`Bot online como ${client.user.tag}`);
 
@@ -34,26 +47,17 @@ client.on("clientReady", async () => {
 
     guild.channels.cache.forEach(async (canal) => {
 
-        // 🔥 1v1 COM 10 PAINÉIS DE VALORES
-        if (canal.name.includes("1v1")) {
-
-            const valores = [
-                "R$1",
-                "R$2",
-                "R$5",
-                "R$10",
-                "R$20",
-                "R$30",
-                "R$50",
-                "R$75",
-                "R$100",
-                "R$200"
-            ];
+        if (
+            canal.name.includes("1v1") ||
+            canal.name.includes("2v2") ||
+            canal.name.includes("3v3") ||
+            canal.name.includes("4v4")
+        ) {
 
             for (let valor of valores) {
 
                 const embed = new EmbedBuilder()
-                    .setTitle("🎮 PAINEL 1v1 - ORG ICE")
+                    .setTitle(`🎮 ${canal.name.toUpperCase()} - ORG ICE`)
                     .setDescription(`💰 Valor da partida: **${valor}**\n\nEscolha sua modalidade:`)
                     .setColor("Green");
 
@@ -77,38 +81,6 @@ client.on("clientReady", async () => {
                 await canal.send({ embeds: [embed], components: [row] });
             }
         }
-
-        // Outros modos continuam normal
-        if (
-            canal.name.includes("2v2") ||
-            canal.name.includes("3v3") ||
-            canal.name.includes("4v4")
-        ) {
-
-            const embed = new EmbedBuilder()
-                .setTitle("🎮 PAINEL DE FILAS - ORG ICE")
-                .setDescription("Escolha sua modalidade:")
-                .setColor("Blue");
-
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setCustomId("full")
-                    .setLabel("Full Capa")
-                    .setStyle(ButtonStyle.Primary),
-
-                new ButtonBuilder()
-                    .setCustomId("normal")
-                    .setLabel("Gelo Normal")
-                    .setStyle(ButtonStyle.Success),
-
-                new ButtonBuilder()
-                    .setCustomId("infinito")
-                    .setLabel("Gelo Infinito")
-                    .setStyle(ButtonStyle.Danger)
-            );
-
-            await canal.send({ embeds: [embed], components: [row] });
-        }
     });
 });
 
@@ -124,27 +96,32 @@ client.on("interactionCreate", async (interaction) => {
     const necessario = jogadoresNecessarios(canalNome);
 
     if (!filas[canalId]) {
-        filas[canalId] = {
-            full: [],
-            normal: [],
-            infinito: []
-        };
+        filas[canalId] = {};
     }
 
-    if (filas[canalId][tipo].includes(interaction.user.id)) {
+    const chaveFila = `${tipo}_${valor}`;
+
+    if (!filas[canalId][chaveFila]) {
+        filas[canalId][chaveFila] = [];
+    }
+
+    if (filas[canalId][chaveFila].includes(interaction.user.id)) {
         return interaction.reply({ content: "Você já está nessa fila!", ephemeral: true });
     }
 
-    filas[canalId][tipo].push(interaction.user.id);
+    filas[canalId][chaveFila].push(interaction.user.id);
 
-    await interaction.reply({ content: `Você entrou na fila ${tipo} ${valor ? `(${valor})` : ""}!`, ephemeral: true });
+    await interaction.reply({ 
+        content: `Você entrou na fila ${tipo} (${valor})!`, 
+        ephemeral: true 
+    });
 
-    if (filas[canalId][tipo].length >= necessario) {
+    if (filas[canalId][chaveFila].length >= necessario) {
 
-        const jogadores = filas[canalId][tipo].splice(0, necessario);
+        const jogadores = filas[canalId][chaveFila].splice(0, necessario);
 
         const sala = await interaction.guild.channels.create({
-            name: `sala-${tipo}-${Date.now()}`,
+            name: `sala-${tipo}-${valor}-${Date.now()}`,
             type: ChannelType.GuildText,
             permissionOverwrites: [
                 {
@@ -158,7 +135,7 @@ client.on("interactionCreate", async (interaction) => {
             ]
         });
 
-        sala.send(`🔥 Sala criada (${valor || "Sem valor"}) para:\n` + jogadores.map(id => `<@${id}>`).join("\n"));
+        sala.send(`🔥 Sala criada (${valor}) para:\n` + jogadores.map(id => `<@${id}>`).join("\n"));
     }
 });
 
