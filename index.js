@@ -41,7 +41,7 @@ const valores = [
 ];
 
 client.on("clientReady", async () => {
-    console.log(Bot online como ${client.user.tag});
+    console.log(`Bot online como ${client.user.tag}`);
 
     const guild = client.guilds.cache.first();
 
@@ -140,3 +140,4 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(process.env.TOKEN);
+
