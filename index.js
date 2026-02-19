@@ -21,9 +21,9 @@ const filas = {};
 
 function jogadoresNecessarios(channelName) {
     if (channelName.includes("1v1")) return 2;
-    if (channelName.includes("2v2")) return 2;
-    if (channelName.includes("3v3")) return 2;
-    if (channelName.includes("4v4")) return 2;
+    if (channelName.includes("2v2")) return 4;
+    if (channelName.includes("3v3")) return 6;
+    if (channelName.includes("4v4")) return 8;
     return 2;
 }
 
@@ -41,7 +41,7 @@ const valores = [
 ];
 
 client.on("clientReady", async () => {
-    console.log(`Bot online como ${client.user.tag}`);
+    console.log(Bot online como ${client.user.tag});
 
     const guild = client.guilds.cache.first();
 
@@ -57,23 +57,23 @@ client.on("clientReady", async () => {
             for (let valor of valores) {
 
                 const embed = new EmbedBuilder()
-                    .setTitle(`🎮 ${canal.name.toUpperCase()} - ORG ICE`)
-                    .setDescription(`💰 Valor da partida: **${valor}**\n\nEscolha sua modalidade:`)
+                    .setTitle(🎮 ${canal.name.toUpperCase()} - ORG ICE)
+                    .setDescription(💰 Valor da partida: **${valor}**\n\nEscolha sua modalidade:)
                     .setColor("Green");
 
                 const row = new ActionRowBuilder().addComponents(
                     new ButtonBuilder()
-                        .setCustomId(`full_${valor}`)
+                        .setCustomId(full_${valor})
                         .setLabel("Full Capa")
                         .setStyle(ButtonStyle.Primary),
 
                     new ButtonBuilder()
-                        .setCustomId(`normal_${valor}`)
+                        .setCustomId(normal_${valor})
                         .setLabel("Gelo Normal")
                         .setStyle(ButtonStyle.Success),
 
                     new ButtonBuilder()
-                        .setCustomId(`infinito_${valor}`)
+                        .setCustomId(infinito_${valor})
                         .setLabel("Gelo Infinito")
                         .setStyle(ButtonStyle.Danger)
                 );
@@ -99,7 +99,7 @@ client.on("interactionCreate", async (interaction) => {
         filas[canalId] = {};
     }
 
-    const chaveFila = `${tipo}_${valor}`;
+    const chaveFila = ${tipo}_${valor};
 
     if (!filas[canalId][chaveFila]) {
         filas[canalId][chaveFila] = [];
@@ -112,7 +112,7 @@ client.on("interactionCreate", async (interaction) => {
     filas[canalId][chaveFila].push(interaction.user.id);
 
     await interaction.reply({ 
-        content: `Você entrou na fila ${tipo} (${valor})!`, 
+        content: Você entrou na fila ${tipo} (${valor})!, 
         ephemeral: true 
     });
 
@@ -121,7 +121,7 @@ client.on("interactionCreate", async (interaction) => {
         const jogadores = filas[canalId][chaveFila].splice(0, necessario);
 
         const sala = await interaction.guild.channels.create({
-            name: `sala-${tipo}-${valor}-${Date.now()}`,
+            name: sala-${tipo}-${valor}-${Date.now()},
             type: ChannelType.GuildText,
             permissionOverwrites: [
                 {
@@ -135,9 +135,8 @@ client.on("interactionCreate", async (interaction) => {
             ]
         });
 
-        sala.send(`🔥 Sala criada (${valor}) para:\n` + jogadores.map(id => `<@${id}>`).join("\n"));
+        sala.send(🔥 Sala criada (${valor}) para:\n + jogadores.map(id => <@${id}>).join("\n"));
     }
 });
 
 client.login(process.env.TOKEN);
-
