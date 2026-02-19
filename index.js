@@ -54,6 +54,15 @@ client.on("clientReady", async () => {
             canal.name.includes("4v4")
         ) {
 
+            const mensagens = await canal.messages.fetch({ limit: 50 });
+
+            const jaExistePainel = mensagens.some(msg =>
+                msg.author.id === client.user.id &&
+                msg.embeds.length > 0
+            );
+
+            if (jaExistePainel) return;
+
             for (let valor of valores) {
 
                 const embed = new EmbedBuilder()
