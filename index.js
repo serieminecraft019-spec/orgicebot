@@ -57,7 +57,7 @@ client.on("clientReady", async () => {
             for (let valor of valores) {
 
                 const embed = new EmbedBuilder()
-                    .setTitle(🎮 ${canal.name.toUpperCase()} - ORG ICE)
+                    .setTitle(`🎮 ${canal.name.toUpperCase()} - ORG ICE`)
                     .setDescription(💰 Valor da partida: **${valor}**\n\nEscolha sua modalidade:)
                     .setColor("Green");
 
@@ -140,4 +140,5 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(process.env.TOKEN);
+
 
