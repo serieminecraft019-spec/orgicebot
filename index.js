@@ -18,14 +18,7 @@ const client = new Client({
 });
 
 const filas = {};
-
-function jogadoresNecessarios(channelName) {
-    if (channelName.includes("1v1")) return 2;
-    if (channelName.includes("2v2")) return 4;
-    if (channelName.includes("3v3")) return 6;
-    if (channelName.includes("4v4")) return 8;
-    return 2;
-}
+const JOGADORES_NECESSARIOS = 2; // 🔥 AGORA É FIXO 2 PRA TUDO
 
 const valores = [
     "R$1","R$2","R$5","R$10","R$20",
@@ -58,7 +51,6 @@ client.once("ready", async () => {
 
         if (jaExistePainel) continue;
 
-        // mensagem marcador invisível
         await canal.send("PAINEL_ORG_ICE");
 
         for (const valor of valores) {
@@ -74,12 +66,12 @@ client.once("ready", async () => {
                     .setLabel("Full Capa")
                     .setStyle(ButtonStyle.Primary),
 
-                new ButtonBuilder()
+                    new ButtonBuilder()
                     .setCustomId(`normal_${valor}`)
                     .setLabel("Gelo Normal")
                     .setStyle(ButtonStyle.Success),
 
-                new ButtonBuilder()
+                    new ButtonBuilder()
                     .setCustomId(`infinito_${valor}`)
                     .setLabel("Gelo Infinito")
                     .setStyle(ButtonStyle.Danger)
@@ -98,8 +90,6 @@ client.on("interactionCreate", async (interaction) => {
     const valor = partes.slice(1).join("_");
 
     const canalId = interaction.channel.id;
-    const canalNome = interaction.channel.name;
-    const necessario = jogadoresNecessarios(canalNome);
 
     if (!filas[canalId]) filas[canalId] = {};
 
@@ -122,9 +112,9 @@ client.on("interactionCreate", async (interaction) => {
         ephemeral: true
     });
 
-    if (filas[canalId][chaveFila].length >= necessario) {
+    if (filas[canalId][chaveFila].length >= JOGADORES_NECESSARIOS) {
 
-        const jogadores = filas[canalId][chaveFila].splice(0, necessario);
+        const jogadores = filas[canalId][chaveFila].splice(0, JOGADORES_NECESSARIOS);
 
         const sala = await interaction.guild.channels.create({
             name: `sala-${tipo}-${valor}-${Date.now()}`,
